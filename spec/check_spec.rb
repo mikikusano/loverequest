@@ -32,6 +32,7 @@ describe "Men's points" do
     passing_point = 0  # FIXME
     Dir.glob("spec/passing/*") do |file|
       username = file.split('/').last
+      next if username.include?(".sample")
       io = open(file)
       answers = {}
       io.each do |l|
