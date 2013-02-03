@@ -5,8 +5,8 @@ gemfile:
   - Gemfile
 
 branches:
-  only:
-    - master
+  except:
+    - gh-pages
 
 notifications:
   webhooks:
