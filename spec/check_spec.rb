@@ -1,21 +1,49 @@
+# coding: utf-8
+
 require 'pry'
 require 'json'
 
+def calc_score(answers)
+  questions = {
+    "デートに行きたい場所は" => {
+      "映画館" => 2,
+      "カラオケ" => -1,
+      "遊園地" => 1,
+      "家" => 0,
+    },
+    "好きな食べ物は何でしょう" => {
+      "ケンタッキーフライドチキン" => 0,
+      "いちご" => 1,
+    },
+    "隠し質問" => {
+      "みーつけた" => 0,
+    },
+  }
+  total = 1
+  questions.keys.each do |q|
+    a = answers[q]
+    total += questions[q][a] || -1
+  end
+  total
+end
+
 describe "Men's points" do
   it "passing" do
-    count = 0
-    Dir.glob("spec/passing/*.json") do |file|
+    passing_point = 0  # FIXME
+    Dir.glob("spec/passing/*") do |file|
+      username = file.split('/').last
       io = open(file)
-      data = JSON.load(io)
-      if data["name"] == "reikubonaga"
-        data["answers"].should eq ["3", "2", "1", "3"]
-      elsif data["name"] == "awakia"
-        data["answers"].should eq ["1", "0", "-1", "2"]
-      else
-        raise ("'#{data["name"]}' does not match known names")
+      answers = {}
+      io.each do |l|
+        q, sep, a = l.strip.rpartition(': ')
+        if sep.empty?
+          raise "invalid format"
+        end
+        answers[q] = a
       end
-      count += 1
+      score = calc_score(answers)
+      puts "#{username}'s score: #{score}"
+      score.should >= passing_point
     end
-    count.should eq 2
   end
 end
